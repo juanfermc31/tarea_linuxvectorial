@@ -134,79 +134,32 @@ Estas fueron algunas de las preguntas realizadas durante el desarrollo del proye
 
 ```mermaid
 flowchart TD
-    Start((Inicio)) --> Init[Declarar Variables]
 
-    Init --> Inputs1[Solicitar al Usuario]
-    Inputs1 --> Inputs2[Limites (x,y,z)]
-    Inputs2 --> Inputs3[Metodo: Riemann o MonteCarlo]
-    Inputs3 --> Inputs4[Tipo de Densidad]
-    Inputs4 --> Inputs5[Pasos o Muestras N]
+    A[Inicio] --> B[Ingresar límites X,Y,Z]
+    B --> C[Ingresar número de muestras N]
+    C --> D[Seleccionar tipo de densidad]
 
-    Inputs5 --> TimerStart[Iniciar Cronometro]
+    D -->|1 Constante| E1[Usar densidad_constante]
+    D -->|2 Lineal| E2[Usar densidad_lineal]
+    D -->|3 Gaussiana| E3[Usar densidad_gaussiana]
 
-    %% Densidades
-    subgraph Densidades [densidades.c Modelos]
-        direction TB
-        D_Const[Densidad Constante 1]
-        D_Lin[Densidad Lineal ax+by+cz]
-        D_Gaus[Densidad Gaussiana exp(-r^2)]
-    end
+    E1 --> F[Inicializar sumatorias]
+    E2 --> F
+    E3 --> F
 
-    %% Integracion
-    subgraph Integracion [integracion.c Nucleo de Calculo]
-        DecideMethod{Metodo Seleccionado?}
+    F --> G[Calcular dx, dy, dz y volumen]
+    G --> H{¿i < N?}
 
-        DecideMethod --> |Riemann| LoopR[Bucle Triple i j k]
-        LoopR --> SumR[Sumar Volumen * rho]
+    H -->|Sí| I[Generar punto aleatorio x,y,z]
+    I --> J[Evaluar densidad rho]
+    J --> K[Acumular sumas]
+    K --> H
 
-        DecideMethod --> |MonteCarlo| LoopMC[Bucle 0 a N]
-        LoopMC --> Rand[Generar Puntos Aleatorios]
-        Rand --> SumMC[Acumular Promedio * Volumen]
-    end
-
-    %% Masa
-    TimerStart --> CallM[Calcular Masa Total M]
-    CallM --> Int_Logic_M[Ejecutar Integracion]
-    Int_Logic_M -.-> Densidades
-    Int_Logic_M --> ResM[Guardar M]
-
-    %% Momento X
-    ResM --> CallX[Calcular Momento X]
-    CallX --> Int_Logic_X[Ejecutar Integracion]
-    Int_Logic_X -.-> Densidades
-    Int_Logic_X --> ResX[Guardar Mx]
-
-    %% Momento Y
-    ResX --> CallY[Calcular Momento Y]
-    CallY --> Int_Logic_Y[Ejecutar Integracion]
-    Int_Logic_Y -.-> Densidades
-    Int_Logic_Y --> ResY[Guardar My]
-
-    %% Momento Z
-    ResY --> CallZ[Calcular Momento Z]
-    CallZ --> Int_Logic_Z[Ejecutar Integracion]
-    Int_Logic_Z -.-> Densidades
-    Int_Logic_Z --> ResZ[Guardar Mz]
-
-    %% Resultados
-    subgraph Main [main.c Resultados]
-        ResZ --> Center1[Centro de Masa]
-        Center1 --> Center2[xbar = Mx/M]
-        Center2 --> Center3[ybar = My/M]
-        Center3 --> Center4[zbar = Mz/M]
-
-        Center4 --> TimerStop[Detener Cronometro]
-        TimerStop --> PrintScreen[Imprimir Resultados]
-        PrintScreen --> FileWrite[Escribir resultados.csv]
-    end
-
-    FileWrite --> End((Fin))
-
-    %% Estilos
-    style Main fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    style Integracion fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    style Densidades fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
-
+    H -->|No| L[Calcular masa M]
+    L --> M[Calcular centro de masa Cx, Cy, Cz]
+    M --> N[Mostrar resultados]
+    N --> O[Guardar en resultados.csv]
+    O --> P[Fin]
 ```
 
 ## 🧑‍💻 Autor
