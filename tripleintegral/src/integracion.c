@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "../include/integracion.h"
+#include "integracion.h"
 
 // Versión optimizada de Monte Carlo sin cambiar nada de la estructura original
 void calcular_monte_carlo(FuncDensidad rho, Limites lim, int n_puntos,

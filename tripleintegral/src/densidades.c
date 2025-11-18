@@ -1,5 +1,5 @@
 #include <math.h>
-#include "../include/densidades.h"
+#include "densidades.h"
 
 // 1. Densidad constante: rho = 1
 static inline double densidad_constante(double x, double y, double z) {
