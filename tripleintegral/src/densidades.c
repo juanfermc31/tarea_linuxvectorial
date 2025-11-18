@@ -1,29 +1,18 @@
-// =========================
-// Archivo: densidades.c
-// =========================
 #include <math.h>
-#include "densidades.h"
+#include "../include/densidades.h"
 
-
-double densidad_constante(double x,double y,double z){
-return 1.0;
+// 1. Densidad constante: rho = 1
+double densidad_constante(double x, double y, double z) {
+    return 1.0;
 }
 
-
-double densidad_lineal(double x,double y,double z){
-return x + y + z;
+// 2. Densidad lineal: rho = ax + by + cz
+// Usaremos coeficientes a=1, b=1, c=1 para el ejemplo
+double densidad_lineal(double x, double y, double z) {
+    return 1.0 * x + 1.0 * y + 1.0 * z;
 }
 
-
-double densidad_gaussiana(double x,double y,double z){
-return exp(-(x*x + y*y + z*z));
+// 3. Densidad gaussiana: rho = e^-(x^2 + y^2 + z^2)
+double densidad_gaussiana(double x, double y, double z) {
+    return exp(-(x*x + y*y + z*z));
 }
-
-
-// Para centro de masa
-
-
-double dens_x(double x,double y,double z){ return x * densidad_constante(x,y,z); }
-double dens_y(double x,double y,double z){ return y * densidad_constante(x,y,z); }
-double dens_z(double x,double y,double z){ return z * densidad_constante(x,y,z); }
-
