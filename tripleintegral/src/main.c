@@ -1,73 +1,66 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "integracion.h"
-#include "densidades.h"
-
-// Variables globales para densidad lineal
-double ax = 1, by = 1, cz = 1;
+#include "../include/densidades.h"
+#include "../include/integracion.h"
 
 int main() {
-    double xmin, xmax, ymin, ymax, zmin, zmax;
-    int metodo, dens, n;
+    // Semilla para números aleatorios [cite: 19]
+    srand(time(NULL));
 
-    printf("--- Calculo de masa y centro de masa ---\n");
+    Limites lim;
+    int opcion, n_puntos;
+    FuncDensidad funcion_seleccionada;
+    char *nombre_densidad;
 
-    printf("Ingrese xmin xmax: ");
-    scanf("%lf %lf", &xmin, &xmax);
+    // Interacción con el usuario [cite: 15]
+    printf("--- Calculadora de Centro de Masa (Monte Carlo) ---\n");
+    printf("Ingrese limites X (min max): "); scanf("%lf %lf", &lim.x_min, &lim.x_max);
+    printf("Ingrese limites Y (min max): "); scanf("%lf %lf", &lim.y_min, &lim.y_max);
+    printf("Ingrese limites Z (min max): "); scanf("%lf %lf", &lim.z_min, &lim.z_max);
+    printf("Numero de muestras (N): "); scanf("%d", &n_puntos);
 
-    printf("Ingrese ymin ymax: ");
-    scanf("%lf %lf", &ymin, &ymax);
+    printf("\nSeleccione densidad:\n1. Constante (1)\n2. Lineal (x+y+z)\n3. Gaussiana\nOpcion: ");
+    scanf("%d", &opcion);
 
-    printf("Ingrese zmin zmax: ");
-    scanf("%lf %lf", &zmin, &zmax);
-
-    printf("Metodo (1=Riemann, 2=Monte Carlo): ");
-    scanf("%d", &metodo);
-
-    printf("Densidad (1=constante, 2=lineal, 3=gaussiana): ");
-    scanf("%d", &dens);
-
-    if (dens == 2) {
-        printf("Ingrese a, b, c para densidad lineal ax + by + cz: ");
-        scanf("%lf %lf %lf", &ax, &by, &cz);
+    switch(opcion) {
+        case 1: funcion_seleccionada = densidad_constante; nombre_densidad = "Constante"; break;
+        case 2: funcion_seleccionada = densidad_lineal; nombre_densidad = "Lineal"; break;
+        case 3: funcion_seleccionada = densidad_gaussiana; nombre_densidad = "Gaussiana"; break;
+        default: printf("Opcion invalida.\n"); return 1;
     }
 
-    printf("Ingrese numero de subdivisiones/puntos: ");
-    scanf("%d", &n);
+    // Variables para resultados
+    double M, cx, cy, cz;
 
-    double (*rho)(double,double,double);
-    if(dens == 1)
-        rho = densidad_constante;
-    else if(dens == 2)
-        rho = densidad_lineal;
-    else
-        rho = densidad_gaussiana;
-
+    // Medición de tiempo [cite: 30, 31]
     clock_t start = clock();
 
-    double M = integrar(metodo, rho, xmin, xmax, ymin, ymax, zmin, zmax, n);
-    double xbar = integrar(metodo, dens_x, xmin, xmax, ymin, ymax, zmin, zmax, n) / M;
-    double ybar = integrar(metodo, dens_y, xmin, xmax, ymin, ymax, zmin, zmax, n) / M;
-    double zbar = integrar(metodo, dens_z, xmin, xmax, ymin, ymax, zmin, zmax, n) / M;
+    calcular_monte_carlo(funcion_seleccionada, lim, n_puntos, &M, &cx, &cy, &cz);
 
     clock_t end = clock();
-    double tiempo = (double)(end - start) / CLOCKS_PER_SEC;
+    double tiempo_seg = (double)(end - start) / CLOCKS_PER_SEC;
 
-    FILE *f = fopen("resultado.csv", "w");
-    if (!f) {
-        perror("fopen");
-    } else {
-        fprintf(f, "Metodo,Densidad,N,M,x_bar,y_bar,z_bar,Tiempo\n");
-        fprintf(f, "%d,%d,%d,%lf,%lf,%lf,%lf,%lf\n",
-            metodo, dens, n, M, xbar, ybar, zbar, tiempo);
-        fclose(f);
+    // Mostrar resultados en consola
+    printf("\n--- Resultados ---\n");
+    printf("Masa Total: %f\n", M);
+    printf("Centro de Masa: (%f, %f, %f)\n", cx, cy, cz);
+    printf("Tiempo: %f segundos\n", tiempo_seg);
+
+    // Guardar en CSV [cite: 16, 29]
+    FILE *fp = fopen("resultados.csv", "a"); // "a" para agregar al final sin borrar
+    if (fp == NULL) {
+        printf("Error al abrir el archivo.\n");
+        return 1;
     }
 
-    printf("\nResultados:\n");
-    printf("Masa: %lf\n", M);
-    printf("Centro de masa: (%lf, %lf, %lf)\n", xbar, ybar, zbar);
-    printf("Tiempo: %lf s\n", tiempo);
+    // Formato: Metodo, Densidad, Nx, Ny, Nz, M, x_bar, y_bar, z_bar, Tiempo
+    // Nota: En Monte Carlo Nx, Ny, Nz son el mismo N total.
+    fprintf(fp, "MonteCarlo,%s,%d,%d,%d,%.6f,%.6f,%.6f,%.6f,%.6f\n",
+            nombre_densidad, n_puntos, n_puntos, n_puntos, M, cx, cy, cz, tiempo_seg);
+
+    fclose(fp);
+    printf("Datos guardados en 'resultados.csv'\n");
 
     return 0;
 }

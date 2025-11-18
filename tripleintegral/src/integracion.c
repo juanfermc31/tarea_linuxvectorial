@@ -1,62 +1,45 @@
-#include <math.h>
 #include <stdlib.h>
-#include "integracion.h"
+#include "../include/integracion.h"
 
-// Método Riemann 3D
-double riemann(double (*f)(double,double,double),
-               double xmin, double xmax,
-               double ymin, double ymax,
-               double zmin, double zmax,
-               int n) {
-
-    double dx = (xmax - xmin) / n;
-    double dy = (ymax - ymin) / n;
-    double dz = (zmax - zmin) / n;
-
-    double suma = 0;
-
-    for(int i = 0; i < n; i++){
-        for(int j = 0; j < n; j++){
-            for(int k = 0; k < n; k++){
-                double x = xmin + (i + 0.5) * dx;
-                double y = ymin + (j + 0.5) * dy;
-                double z = zmin + (k + 0.5) * dz;
-
-                suma += f(x, y, z);
-            }
-        }
-    }
-
-    return suma * dx * dy * dz;
+// Función auxiliar para generar un double aleatorio entre min y max [cite: 19]
+double random_range(double min, double max) {
+    double scale = rand() / (double) RAND_MAX;
+    return min + scale * (max - min);
 }
 
-// Método Monte Carlo
-double montecarlo(double (*f)(double,double,double),
-                  double xmin, double xmax,
-                  double ymin, double ymax,
-                  double zmin, double zmax,
-                  int N) {
+void calcular_monte_carlo(FuncDensidad rho, Limites lim, int n_puntos,
+                          double *masa, double *cm_x, double *cm_y, double *cm_z) {
 
-    double V = (xmax - xmin) * (ymax - ymin) * (zmax - zmin);
-    double suma = 0;
+    double sum_rho = 0.0;
+    double sum_x_rho = 0.0;
+    double sum_y_rho = 0.0;
+    double sum_z_rho = 0.0;
 
-    for(int i = 0; i < N; i++) {
-        double x = xmin + (double)rand()/RAND_MAX * (xmax - xmin);
-        double y = ymin + (double)rand()/RAND_MAX * (ymax - ymin);
-        double z = zmin + (double)rand()/RAND_MAX * (zmax - zmin);
+    // Volumen de la región rectangular V = Lx * Ly * Lz [cite: 18]
+    double volumen = (lim.x_max - lim.x_min) * (lim.y_max - lim.y_min) * (lim.z_max - lim.z_min);
 
-        suma += f(x, y, z);
+    for (int i = 0; i < n_puntos; i++) {
+        // Generar punto aleatorio (xi, yi, zi) dentro de los límites [cite: 13]
+        double rx = random_range(lim.x_min, lim.x_max);
+        double ry = random_range(lim.y_min, lim.y_max);
+        double rz = random_range(lim.z_min, lim.z_max);
+
+        // Evaluar la densidad en ese punto
+        double val_rho = rho(rx, ry, rz);
+
+        // Acumular sumas para Masa y Momentos
+        sum_rho   += val_rho;
+        sum_x_rho += rx * val_rho;
+        sum_y_rho += ry * val_rho;
+        sum_z_rho += rz * val_rho;
     }
 
-    return V * (suma / N);
-}
+    // Aplicar teorema del promedio de Monte Carlo: Integral approx V * (Suma / N) [cite: 18]
+    *masa = volumen * (sum_rho / n_puntos);
 
-double integrar(int metodo, double (*f)(double,double,double),
-                double xmin,double xmax,double ymin,double ymax,
-                double zmin,double zmax,int n) {
-
-    if (metodo == 1)
-        return riemann(f, xmin, xmax, ymin, ymax, zmin, zmax, n);
-    else
-        return montecarlo(f, xmin, xmax, ymin, ymax, zmin, zmax, n);
+    // Centro de masa: (Integral x*rho) / Masa [cite: 5]
+    // Calculamos primero la integral del momento y dividimos por la masa al final
+    *cm_x = (volumen * (sum_x_rho / n_puntos)) / *masa;
+    *cm_y = (volumen * (sum_y_rho / n_puntos)) / *masa;
+    *cm_z = (volumen * (sum_z_rho / n_puntos)) / *masa;
 }
