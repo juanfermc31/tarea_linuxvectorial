@@ -1,6 +1,6 @@
 # README.md — Cálculo de Masa y Centro de Masa mediante Integración Triple en C
 
-Este proyecto implementa un sistema en C para calcular la masa total y el centro de masa de un sólido tridimensional mediante integración numérica usando los métodos de Riemann 3D y Monte Carlo. El usuario puede seleccionar el tipo de densidad, el método numérico y los límites del dominio.
+Este proyecto implementa un sistema optimizado en C para calcular la masa total y el centro de masa de un sólido tridimensional, utilizando integración numérica por el método de Monte Carlo. El código está organizado modularmente y optimizado para ser rápido y eficiente.
 
 ---
 
@@ -10,49 +10,49 @@ Este proyecto implementa un sistema en C para calcular la masa total y el centro
 tripleintegral/
 ├── src/
 │   ├── main.c
-│   ├── integracion.c
-│   └── densidades.c
+│   ├── densidades.c
+│   └── integracion.c
 ├── include/
-│   ├── integracion.h
-│   └── densidades.h
-├── Makefile
-└── README.md
+│   ├── densidades.h
+│   └── integracion.h
+├── obj/               ← generado automáticamente
+├── programa_vectorial ← ejecutable
+└── Makefile
 ```
 
 ---
 
-## 🧠 Conceptos Principales
+## 🧠 Conceptos Implementados
 
-### ✔️ Masa total
+### ✔️ Masa
 
 ```
-M = ∭ ρ(x, y, z) dV
+M = ∭ ρ(x, y, z) \, dV
 ```
 
 ### ✔️ Centro de masa
 
 ```
-x̄ = (1/M) ∭ x·ρ dV
-ȳ = (1/M) ∭ y·ρ dV
-z̄ = (1/M) ∭ z·ρ dV
+x̄ = (1/M) ∭ xρ \, dV
+ȳ = (1/M) ∭ yρ \, dV
+z̄ = (1/M) ∭ zρ \, dV
 ```
 
 ### ✔️ Densidades disponibles
 
 * **Constante** → ρ = 1
-* **Lineal** → ρ = ax + by + cz
+* **Lineal** → ρ = x + y + z
 * **Gaussiana** → ρ = exp(-(x² + y² + z²))
 
-### ✔️ Métodos de integración
+### ✔️ Método de integración implementado
 
-* **Riemann 3D**
-* **Monte Carlo 3D**
+* **Monte Carlo 3D optimizado**
 
 ---
 
-## ▶️ Compilación del Proyecto
+## ▶️ Cómo Compilar
 
-Ejecutar en la terminal:
+En la terminal, ejecutar:
 
 ```
 make
@@ -61,46 +61,48 @@ make
 Esto generará el ejecutable:
 
 ```
-./triple_integral
+./programa_vectorial
 ```
 
-Para limpiar archivos generados:
+Para limpiar objetos y ejecutable:
 
 ```
 make clean
 ```
 
----
-
-## ▶️ Ejecución del Programa
-
-Ejecutar:
+Para compilar y ejecutar automáticamente:
 
 ```
-./triple_integral
+make run
+```
+
+---
+
+## ▶️ Cómo Ejecutar el Programa
+
+```
+./programa_vectorial
 ```
 
 El programa solicitará:
 
-* xmin, xmax
-* ymin, ymax
-* zmin, zmax
-* Método (1 = Riemann, 2 = Monte Carlo)
-* Densidad (1, 2 o 3)
-* Parámetros a, b, c si la densidad es lineal
-* Número de subdivisiones/puntos
+* Límites en X
+* Límites en Y
+* Límites en Z
+* Número de muestras N
+* Tipo de densidad (1–3)
 
 ---
 
 ## 📊 Archivo de Salida
 
-Se generará:
+El programa genera:
 
 ```
-resultado.csv
+resultados.csv
 ```
 
-Formato:
+Con el formato:
 
 ```
 Metodo,Densidad,N,M,x_bar,y_bar,z_bar,Tiempo
@@ -109,63 +111,56 @@ Metodo,Densidad,N,M,x_bar,y_bar,z_bar,Tiempo
 Ejemplo:
 
 ```
-1,2,40,5.0231,0.1200,0.1200,0.1200,0.054
+MonteCarlo,Gaussiana,100000,100000,100000,12.5831,0.1020,-0.0030,0.2210,0.0872
 ```
-
----
-
-## 🔧 Requisitos (Windows)
-
-1. Instalar **MinGW** desde:
-   [https://sourceforge.net/projects/mingw/](https://sourceforge.net/projects/mingw/)
-2. Agregar al PATH:
-
-```
-C:\MinGW\bin
-```
-
-3. Verificar:
-
-```
-gcc --version
-```
-
----
-
-## 🚀 Subir a GitHub
-
-```
-git init
-git add .
-git commit -m "Proyecto integrales triples"
-git branch -M main
-git remote add origin <tu_repo_url>
-git push -u origin main
-```
-
----
-
-## 📌 Mejoras Futuras
-
-* Independizar Nx, Ny y Nz
-* Añadir parámetros avanzados para la gaussiana
-* Validación completa de entradas
-* Guardar múltiples ejecuciones en el CSV
-* Añadir visualización con Python
 
 ---
 
 ## ❓ Preguntas a ChatGPT como orientación
 
-Estas fueron algunas de las preguntas realizadas durante el desarrollo del proyecto para guiar la implementación:
+Estas fueron algunas de las preguntas realizadas durante el desarrollo del proyecto:
 
-* ¿Cómo organizar el proyecto con archivos `main.c`, `integracion.c`, `densidades.c` y sus headers?
-* ¿Cómo adaptar el código para que el usuario ingrese los valores por consola?
-* ¿Cómo compilar y ejecutar el proyecto en Visual Studio Code?
-* ¿Cómo estructurar el Makefile para compilar automáticamente todos los módulos?
-* ¿Qué método de integración es más eficiente entre Riemann y Monte Carlo?
-* ¿Cómo generar y guardar resultados en un archivo CSV?
-* ¿Cómo subir el proyecto a GitHub desde VS Code?
+* ¿Cómo organizar el proyecto en múltiples archivos .c y .h?
+* ¿Cómo optimizar el algoritmo Monte Carlo sin alterar la estructura del programa?
+* ¿Cómo compilar correctamente usando VS Code con MinGW?
+* ¿Cómo modificar funciones para que acepten densidades variables?
+* ¿Cómo crear un Makefile rápido y con directorio obj/?
+* ¿Cómo mejorar la velocidad manteniendo la misma lógica?
+* ¿Cómo guardar resultados en CSV sin sobrescribirlos?
+
+---
+
+## 🔷 Diagrama de Flujo del Programa
+
+```mermaid
+flowchart TD
+
+    A[Inicio] --> B[Ingresar límites X,Y,Z]
+    B --> C[Ingresar número de muestras N]
+    C --> D[Seleccionar tipo de densidad]
+
+    D -->|1 Constante| E1[Usar densidad_constante]
+    D -->|2 Lineal| E2[Usar densidad_lineal]
+    D -->|3 Gaussiana| E3[Usar densidad_gaussiana]
+
+    E1 --> F[Inicializar sumatorias]
+    E2 --> F
+    E3 --> F
+
+    F --> G[Calcular dx, dy, dz y volumen]
+    G --> H{¿i < N?}
+
+    H -->|Sí| I[Generar punto aleatorio x,y,z]
+    I --> J[Evaluar densidad rho]
+    J --> K[Acumular sumas]
+    K --> H
+
+    H -->|No| L[Calcular masa M]
+    L --> M[Calcular centro de masa Cx, Cy, Cz]
+    M --> N[Mostrar resultados]
+    N --> O[Guardar en resultados.csv]
+    O --> P[Fin]
+```
 
 ## 🧑‍💻 Autor
 
