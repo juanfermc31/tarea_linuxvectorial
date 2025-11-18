@@ -1,23 +1,45 @@
+# Compilador
 CC = gcc
-CFLAGS = -Wall -Iinclude
+
+# Flags de compilación
+CFLAGS = -Wall -O2 -Iinclude
 LIBS = -lm
 
-# Archivos fuente y objeto
-SRC = src/main.c src/densidades.c src/integracion.c
-OBJ = $(SRC:.c=.o)
-EXEC = programa_vectorial
+# Directorios
+SRC_DIR = src
+OBJ_DIR = obj
+BIN = programa_vectorial
 
-# Regla principal: compilar todo
-all: $(EXEC)
+# Archivos .c y sus .o correspondientes
+SRC = $(wildcard $(SRC_DIR)/*.c)
+OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
 
-# Enlazar los objetos para crear el ejecutable
-$(EXEC): $(OBJ)
-	$(CC) $(OBJ) -o $(EXEC) $(LIBS)
+# =========================
+# Regla principal
+# =========================
+all: $(BIN)
 
-# Compilar archivos .c a .o
-%.o: %.c
+# Enlace final
+$(BIN): $(OBJ)
+	$(CC) $(OBJ) -o $(BIN) $(LIBS)
+	@echo "✔ Ejecutable generado: $(BIN)"
+
+# =========================
+# Regla genérica para compilar .c → .o
+# =========================
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Limpiar archivos generados
+# =========================
+# Limpieza
+# =========================
 clean:
-	rm -f src/*.o $(EXEC)
+	rm -rf $(OBJ_DIR) $(BIN)
+	@echo "✔ Limpieza completa"
+
+# =========================
+# Ejecutar programa
+# =========================
+run: all
+	./$(BIN)
