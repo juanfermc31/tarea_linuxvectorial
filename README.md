@@ -4,7 +4,7 @@ Este proyecto implementa un sistema optimizado en C para calcular la masa total 
 
 ---
 
-## 📁 Estructura del Proyecto
+##  Estructura del Proyecto
 
 ```
 tripleintegral/
@@ -22,15 +22,15 @@ tripleintegral/
 
 ---
 
-## 🧠 Conceptos Implementados
+##  Conceptos Implementados
 
-### ✔️ Masa
+###  Masa
 
 ```
 M = ∭ ρ(x, y, z) \, dV
 ```
 
-### ✔️ Centro de masa
+###  Centro de masa
 
 ```
 x̄ = (1/M) ∭ xρ \, dV
@@ -38,19 +38,19 @@ x̄ = (1/M) ∭ xρ \, dV
 z̄ = (1/M) ∭ zρ \, dV
 ```
 
-### ✔️ Densidades disponibles
+###  Densidades disponibles
 
 * **Constante** → ρ = 1
 * **Lineal** → ρ = x + y + z
 * **Gaussiana** → ρ = exp(-(x² + y² + z²))
 
-### ✔️ Método de integración implementado
+###  Método de integración implementado
 
 * **Monte Carlo 3D optimizado**
 
 ---
 
-## ▶️ Cómo Compilar
+##  Cómo Compilar
 
 En la terminal, ejecutar:
 
@@ -78,7 +78,7 @@ make run
 
 ---
 
-## ▶️ Cómo Ejecutar el Programa
+##  Cómo Ejecutar el Programa
 
 ```
 ./programa_vectorial
@@ -94,7 +94,7 @@ El programa solicitará:
 
 ---
 
-## 📊 Archivo de Salida
+##  Archivo de Salida
 
 El programa genera:
 
@@ -116,7 +116,7 @@ MonteCarlo,Gaussiana,100000,100000,100000,12.5831,0.1020,-0.0030,0.2210,0.0872
 
 ---
 
-## ❓ Preguntas a ChatGPT como orientación
+##  Preguntas a ChatGPT como orientación
 
 Estas fueron algunas de las preguntas realizadas durante el desarrollo del proyecto:
 
@@ -130,7 +130,7 @@ Estas fueron algunas de las preguntas realizadas durante el desarrollo del proye
 
 ---
 
-## 🔷 Diagrama de Flujo del Programa
+##  Diagrama de Flujo del Programa
 
 ```mermaid
 flowchart TD
