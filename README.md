@@ -155,6 +155,18 @@ git push -u origin main
 
 ---
 
+## ❓ Preguntas a ChatGPT como orientación
+
+Estas fueron algunas de las preguntas realizadas durante el desarrollo del proyecto para guiar la implementación:
+
+* ¿Cómo organizar el proyecto con archivos `main.c`, `integracion.c`, `densidades.c` y sus headers?
+* ¿Cómo adaptar el código para que el usuario ingrese los valores por consola?
+* ¿Cómo compilar y ejecutar el proyecto en Visual Studio Code?
+* ¿Cómo estructurar el Makefile para compilar automáticamente todos los módulos?
+* ¿Qué método de integración es más eficiente entre Riemann y Monte Carlo?
+* ¿Cómo generar y guardar resultados en un archivo CSV?
+* ¿Cómo subir el proyecto a GitHub desde VS Code?
+
 ## 🧑‍💻 Autor
 
 Juan Fernando Martinez Cabrera
