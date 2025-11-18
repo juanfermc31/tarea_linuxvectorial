@@ -1,19 +1,23 @@
-CC=gcc
-CFLAGS=-Iinclude -Wall -O2
+CC = gcc
+CFLAGS = -Wall -Iinclude
+LIBS = -lm
 
-all: triple_integral
+# Archivos fuente y objeto
+SRC = src/main.c src/densidades.c src/integracion.c
+OBJ = $(SRC:.c=.o)
+EXEC = programa_vectorial
 
-triple_integral: src/main.o src/integracion.o src/densidades.o
-	$(CC) src/main.o src/integracion.o src/densidades.o -o triple_integral -lm
+# Regla principal: compilar todo
+all: $(EXEC)
 
-src/main.o: src/main.c include/integracion.h include/densidades.h
-	$(CC) $(CFLAGS) -c src/main.c -o src/main.o
+# Enlazar los objetos para crear el ejecutable
+$(EXEC): $(OBJ)
+	$(CC) $(OBJ) -o $(EXEC) $(LIBS)
 
-src/integracion.o: src/integracion.c include/integracion.h
-	$(CC) $(CFLAGS) -c src/integracion.c -o src/integracion.o
+# Compilar archivos .c a .o
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-src/densidades.o: src/densidades.c include/densidades.h
-	$(CC) $(CFLAGS) -c src/densidades.c -o src/densidades.o
-
+# Limpiar archivos generados
 clean:
-	rm -f src/*.o triple_integral
+	rm -f src/*.o $(EXEC)
